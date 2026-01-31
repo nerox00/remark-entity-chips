@@ -2,6 +2,8 @@
 
 Transform entity mentions into rich, visual chips in Markdown. Works with Astro, Next.js, Docusaurus, and any remark-based pipeline.
 
+[Live Demo (Astro)](https://entity-chips-demo-astro.pages.dev/)
+
 ---
 
 ## Examples
