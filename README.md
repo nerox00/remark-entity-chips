@@ -128,41 +128,6 @@ export default defineConfig({
 });
 ```
 
-### Next.js
-
-```js
-// next.config.mjs
-import createMDX from "@next/mdx";
-import entityChips from "@nerox_dev/remark-entity-chips";
-
-const withMDX = createMDX({
-  options: {
-    remarkPlugins: [entityChips],
-  },
-});
-
-export default withMDX({});
-```
-
-### Docusaurus
-
-```js
-// docusaurus.config.js
-const entityChips = require("@nerox_dev/remark-entity-chips").default;
-
-module.exports = {
-  presets: [
-    [
-      "classic",
-      {
-        docs: { remarkPlugins: [entityChips] },
-        blog: { remarkPlugins: [entityChips] },
-      },
-    ],
-  ],
-};
-```
-
 ## Configuration
 
 ```js
