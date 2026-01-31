@@ -1,6 +1,6 @@
 {
   "name": "@nerox_dev/remark-entity-chips",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Transform entity mentions into beautiful chips in Markdown",
   "main": "./dist/index.js",
   "scripts": {
@@ -26,9 +26,9 @@
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nerox00/entity-chips"
+    "url": "https://https://github.com/nerox00/remark-entity-chips"
   },
-  "homepage": "https://github.com/nerox00/entity-chips#readme",
+  "homepage": "https://https://github.com/nerox00/remark-entity-chips#readme",
   "files": [
     "dist",
     "README.md",
