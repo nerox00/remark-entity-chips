@@ -1,5 +1,5 @@
 {
-  "name": "@entitychips/remark",
+  "name": "@neroxdev/remark-entity-chips",
   "version": "0.1.0",
   "description": "Transform entity mentions into beautiful chips in Markdown",
   "main": "./dist/index.js",
@@ -10,17 +10,31 @@
     "test:run": "vitest run",
     "prepublishOnly": "npm run test:run && npm run build"
   },
-  "keywords": ["remark", "remark-plugin", "markdown", "entity", "chips", "unified", "astro", "nextjs"],
+  "keywords": [
+    "remark",
+    "remark-plugin",
+    "markdown",
+    "entity",
+    "chips",
+    "unified",
+    "astro",
+    "nextjs"
+  ],
   "author": "Nerox <hello@nerox.dev>",
   "license": "MIT",
   "type": "module",
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nerox-dev/entity-chips"
+    "url": "https://github.com/nerox00/entity-chips"
   },
-  "homepage": "https://github.com/nerox-dev/entity-chips#readme",
-  "files": ["dist", "public", "README.md", "LICENSE"],
+  "homepage": "https://github.com/nerox00/entity-chips#readme",
+  "files": [
+    "dist",
+    "public",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -28,6 +42,7 @@
     }
   },
   "dependencies": {
+    "sharp": "^0.34.5",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.1.0"
   },

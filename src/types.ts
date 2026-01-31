@@ -4,12 +4,15 @@ export interface Entity {
   url: string;
   category: string;
   type: 'company' | 'person' | 'platform' | 'project';
-  twitter?: string;
+  x?: string;
   github?: string;
 }
 
 export interface EntityChipsOptions {
-  cdnUrl?: string;
+  /** Transform bare URLs into chips (default: true) */
+  autoDetectUrls?: boolean;
+  /** Transform markdown links [text](url) into chips (default: false) */
+  transformMarkdownLinks?: boolean;
   classNames?: {
     chip?: string;
     favicon?: string;

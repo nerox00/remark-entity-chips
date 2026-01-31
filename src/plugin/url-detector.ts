@@ -9,7 +9,7 @@ export interface DetectedUrl {
 const urlPatterns: Record<string, RegExp> = {
   youtube: /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/,
   github: /github\.com\/([^\/\s]+)\/([^\/\s]+)/,
-  twitter: /(?:twitter\.com|x\.com)\/([^\/\s]+)/,
+  x: /(?:twitter\.com|x\.com)\/([^\/\s]+)/,
   linkedin: /linkedin\.com\/(?:in|company)\/([^\/\s]+)/,
 };
 

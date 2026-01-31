@@ -4,61 +4,70 @@ import type { Root, RootContent, Link, Text, PhrasingContent } from 'mdast';
 import type { EntityChipsOptions } from '../types.js';
 import { parseMentions } from './parser.js';
 import { detectUrls } from './url-detector.js';
-import { renderEntityChip, renderUrlChip } from './renderer.js';
+import { renderEntityChip, renderUrlChip, renderLinkChip } from './renderer.js';
 import { getEntity } from '../utils/entity-lookup.js';
 
 const remarkEntityChips: Plugin<[EntityChipsOptions?], Root> = (options = {}) => {
+  const autoDetectUrls = options.autoDetectUrls ?? true;
+  const transformMarkdownLinks = options.transformMarkdownLinks ?? false;
+
   return (tree) => {
-    // Pass 1: Handle @[text](url) — remark-parse turns [text](url) into a link node,
-    // so we look for a text node ending with "@" followed by a link node.
+    // Pass 1: Handle @[text](url) and optionally [text](url)
     visit(tree, 'link', (node: Link, index, parent) => {
-      if (parent == null || index == null || index === 0) return;
+      if (parent == null || index == null) return;
 
-      const prev = parent.children[index - 1];
-      if (prev.type !== 'text') return;
-
-      const textNode = prev as Text;
-      if (!textNode.value.endsWith('@')) return;
-
-      // Extract the link text
       const linkText = (node.children[0] as Text)?.value ?? '';
-      const slug = linkText.toLowerCase();
-      const entity = getEntity(slug);
-      const displayName = entity?.name ?? linkText;
       const url = node.url;
 
-      const mention = {
-        slug,
-        entity,
-        displayName,
-        url,
-        fullMatch: `@[${linkText}](${url})`,
-        index: 0,
-      };
+      // Check for @[text](url) — preceding text node ends with "@"
+      if (index > 0) {
+        const prev = parent.children[index - 1];
+        if (prev.type === 'text' && (prev as Text).value.endsWith('@')) {
+          const textNode = prev as Text;
+          const slug = linkText.toLowerCase();
+          const entity = getEntity(slug);
+          const displayName = entity?.name ?? linkText;
 
-      const html = renderEntityChip(mention, options);
-      const htmlNode: RootContent = { type: 'html', value: html };
+          const mention = {
+            slug,
+            entity,
+            displayName,
+            url,
+            fullMatch: `@[${linkText}](${url})`,
+            index: 0,
+          };
 
-      // Remove the trailing @ from the preceding text node
-      const newNodes: RootContent[] = [];
-      const trimmed = textNode.value.slice(0, -1);
-      if (trimmed.length > 0) {
-        newNodes.push({ type: 'text', value: trimmed } as RootContent);
+          const html = renderEntityChip(mention, options);
+          const htmlNode: RootContent = { type: 'html', value: html };
+
+          const newNodes: RootContent[] = [];
+          const trimmed = textNode.value.slice(0, -1);
+          if (trimmed.length > 0) {
+            newNodes.push({ type: 'text', value: trimmed } as RootContent);
+          }
+          newNodes.push(htmlNode);
+
+          parent.children.splice(index - 1, 2, ...newNodes as PhrasingContent[]);
+          return index - 1 + newNodes.length;
+        }
       }
-      newNodes.push(htmlNode);
 
-      // Replace prev text node + link node with new nodes
-      parent.children.splice(index - 1, 2, ...newNodes as PhrasingContent[]);
-      return index - 1 + newNodes.length;
+      // Optionally transform regular markdown links [text](url)
+      if (transformMarkdownLinks && url.startsWith('http')) {
+        const html = renderLinkChip(linkText, url, options);
+        const htmlNode: RootContent = { type: 'html', value: html };
+        parent.children.splice(index, 1, htmlNode as PhrasingContent);
+        return index + 1;
+      }
     });
 
-    // Pass 2: Handle @[entity] (no custom URL) and auto-detect URLs in text
+    // Pass 2: Handle @[entity] (no custom URL) and auto-detect bare URLs in text
     visit(tree, 'text', (node, index, parent) => {
       if (parent == null || index == null) return;
 
       const text = (node as Text).value;
       const mentions = parseMentions(text);
-      const urls = detectUrls(text);
+      const urls = autoDetectUrls ? detectUrls(text) : [];
 
       if (mentions.length === 0 && urls.length === 0) return;
 
@@ -71,7 +80,7 @@ const remarkEntityChips: Plugin<[EntityChipsOptions?], Root> = (options = {}) =>
       const replacements: Replacement[] = [];
 
       for (const m of mentions) {
-        if (!m.entity && !m.url) continue;
+        if (!m.entity && !m.url && !m.slug) continue;
         replacements.push({
           index: m.index,
           length: m.fullMatch.length,
