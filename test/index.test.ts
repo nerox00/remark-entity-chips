@@ -39,7 +39,11 @@ describe('EntityChips Plugin', () => {
 
     it('falls back gracefully for unknown entities', () => {
       const result = processMarkdown('@[unknown-entity-xyz]');
-      expect(result).toContain('@[unknown-entity-xyz]');
+      expect(result).toContain('class="entity-chip"');
+      expect(result).toContain('data-type="generic"');
+      expect(result).toContain('unknown-entity-xyz');
+      expect(result).not.toContain('<img');
+      expect(result).not.toContain('<a');
     });
 
     it('handles multiple entities in one line', () => {
@@ -69,7 +73,7 @@ describe('EntityChips Plugin', () => {
 
     it('detects Twitter/X URLs', () => {
       const result = processMarkdown('Follow https://twitter.com/elonmusk');
-      expect(result).toContain('twitter.webp');
+      expect(result).toContain('x.webp');
     });
 
     it('detects LinkedIn URLs', () => {
@@ -79,9 +83,9 @@ describe('EntityChips Plugin', () => {
   });
 
   describe('options', () => {
-    it('uses custom CDN URL', () => {
-      const result = processMarkdown('@[stripe]', { cdnUrl: 'https://cdn.example.com/icons' });
-      expect(result).toContain('https://cdn.example.com/icons/stripe.webp');
+    it('uses default image path', () => {
+      const result = processMarkdown('@[stripe]');
+      expect(result).toContain('cdn.jsdelivr.net/npm/@neroxdev/remark-entity-chips/public/entities/stripe.webp');
     });
 
     it('uses custom class names', () => {

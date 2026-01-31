@@ -44,8 +44,10 @@ function getSlugFromUrl(url: string): string | null {
   }
 }
 
+const CDN_BASE = 'https://cdn.jsdelivr.net/npm/@neroxdev/remark-entity-chips/public/entities';
+
 function getImagePath(slug: string): string {
-  return `/entities/${slug}.webp`;
+  return `${CDN_BASE}/${slug}.webp`;
 }
 
 export function renderEntityChip(mention: ParsedMention, options: EntityChipsOptions): string {
