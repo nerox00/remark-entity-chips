@@ -14,7 +14,7 @@ Entities in the built-in database are automatically resolved with their name, fa
 <tr><th>Markdown</th><th>Result</th></tr>
 <tr>
 <td><code>@[stripe]</code></td>
-<td><a href="https://stripe.com"><img src="https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://stripe.com&size=48" alt="Stripe" width="16" height="16" /> Stripe</a></td>
+<td><a href="https://stripe.com"><img src="https://t2.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=48&amp;url=http://stripe.com" alt="Stripe" width="16" height="16" /> Stripe</a></td>
 </tr>
 <tr>
 <td><code>@[github]</code></td>
@@ -42,7 +42,7 @@ Use the entity's favicon and display name but link to a custom URL.
 <tr><th>Markdown</th><th>Result</th></tr>
 <tr>
 <td><code>@[stripe](https://stripe.com/pricing)</code></td>
-<td><a href="https://stripe.com/pricing"><img src="https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://stripe.com&size=48" alt="Stripe" width="16" height="16" /> Stripe</a></td>
+<td><a href="https://stripe.com/pricing"><img src="https://t2.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=48&amp;url=http://stripe.com" alt="Stripe" width="16" height="16" /> Stripe</a></td>
 </tr>
 </table>
 
@@ -234,6 +234,12 @@ Add CSS to style the chips:
   border-radius: 2px;
 }
 ```
+
+## Disclaimer
+
+This project is not affiliated with, endorsed by, or sponsored by any of the companies or projects whose names or trademarks appear in the built-in entity database. All trademarks, logos, and brand names are the property of their respective owners and are used here solely for identification purposes.
+
+Favicons are fetched at runtime via Google's public favicon service and are not bundled or redistributed with this package.
 
 ## License
 

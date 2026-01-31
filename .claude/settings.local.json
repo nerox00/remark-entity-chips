@@ -5,7 +5,8 @@
       "Bash(npm install:*)",
       "Bash(npx astro dev)",
       "Bash(npx tsc:*)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "Bash(git rm:*)"
     ]
   }
 }

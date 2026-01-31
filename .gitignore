@@ -25,6 +25,9 @@ coverage/
 *.log
 npm-debug.log*
 
+# Entity favicons (no longer distributed)
+public/entities/
+
 # Temporary
 .turbo/
 .astro/

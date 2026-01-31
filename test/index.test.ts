@@ -20,7 +20,7 @@ describe('EntityChips Plugin', () => {
       expect(result).toContain('class="entity-chip"');
       expect(result).toContain('Stripe');
       expect(result).toContain('href="https://stripe.com"');
-      expect(result).toContain('stripe.webp');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
     });
 
     it('handles custom URLs', () => {
@@ -34,7 +34,7 @@ describe('EntityChips Plugin', () => {
       expect(result).toContain('href="https://example.com"');
       expect(result).toContain('My Site');
       expect(result).toContain('data-type="link"');
-      expect(result).not.toContain('<img');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
     });
 
     it('falls back gracefully for unknown entities', () => {
@@ -62,30 +62,31 @@ describe('EntityChips Plugin', () => {
   describe('URL auto-detection', () => {
     it('detects YouTube URLs', () => {
       const result = processMarkdown('Watch https://youtube.com/watch?v=abc123');
-      expect(result).toContain('youtube.webp');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
       expect(result).toContain('data-type="platform"');
     });
 
     it('detects GitHub URLs', () => {
       const result = processMarkdown('See https://github.com/facebook/react');
-      expect(result).toContain('github.webp');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
     });
 
     it('detects Twitter/X URLs', () => {
       const result = processMarkdown('Follow https://twitter.com/elonmusk');
-      expect(result).toContain('x.webp');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
     });
 
     it('detects LinkedIn URLs', () => {
       const result = processMarkdown('Connect https://linkedin.com/in/johndoe');
-      expect(result).toContain('linkedin.webp');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
     });
   });
 
   describe('options', () => {
     it('uses default image path', () => {
       const result = processMarkdown('@[stripe]');
-      expect(result).toContain('cdn.jsdelivr.net/gh/nerox00/entity-chips/public/entities/stripe.webp');
+      expect(result).toContain('t2.gstatic.com/faviconV2');
+      expect(result).toContain('url=http://stripe.com');
     });
 
     it('uses custom class names', () => {
