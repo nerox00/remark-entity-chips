@@ -44,7 +44,7 @@ function getSlugFromUrl(url: string): string | null {
   }
 }
 
-const CDN_BASE = 'https://cdn.jsdelivr.net/npm/@neroxdev/remark-entity-chips/public/entities';
+const CDN_BASE = 'https://cdn.jsdelivr.net/gh/nerox00/entity-chips/public/entities';
 
 function getImagePath(slug: string): string {
   return `${CDN_BASE}/${slug}.webp`;

@@ -85,7 +85,7 @@ describe('EntityChips Plugin', () => {
   describe('options', () => {
     it('uses default image path', () => {
       const result = processMarkdown('@[stripe]');
-      expect(result).toContain('cdn.jsdelivr.net/npm/@neroxdev/remark-entity-chips/public/entities/stripe.webp');
+      expect(result).toContain('cdn.jsdelivr.net/gh/nerox00/entity-chips/public/entities/stripe.webp');
     });
 
     it('uses custom class names', () => {

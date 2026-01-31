@@ -1,4 +1,4 @@
-# @neroxdev/remark-entity-chips
+# @nerox_dev/remark-entity-chips
 
 Transform entity mentions into rich, visual chips in Markdown. Works with Astro, Next.js, Docusaurus, and any remark-based pipeline.
 
@@ -107,7 +107,7 @@ Standard markdown links `[text](url)` can optionally be transformed into chips. 
 ## Installation
 
 ```bash
-npm install @neroxdev/remark-entity-chips
+npm install @nerox_dev/remark-entity-chips
 ```
 
 ## Quick Start
@@ -117,7 +117,7 @@ npm install @neroxdev/remark-entity-chips
 ```js
 // astro.config.mjs
 import { defineConfig } from "astro/config";
-import entityChips from "@neroxdev/remark-entity-chips";
+import entityChips from "@nerox_dev/remark-entity-chips";
 
 export default defineConfig({
   markdown: {
@@ -131,7 +131,7 @@ export default defineConfig({
 ```js
 // next.config.mjs
 import createMDX from "@next/mdx";
-import entityChips from "@neroxdev/remark-entity-chips";
+import entityChips from "@nerox_dev/remark-entity-chips";
 
 const withMDX = createMDX({
   options: {
@@ -146,7 +146,7 @@ export default withMDX({});
 
 ```js
 // docusaurus.config.js
-const entityChips = require("@neroxdev/remark-entity-chips").default;
+const entityChips = require("@nerox_dev/remark-entity-chips").default;
 
 module.exports = {
   presets: [
@@ -164,7 +164,7 @@ module.exports = {
 ## Configuration
 
 ```js
-import entityChips from "@neroxdev/remark-entity-chips";
+import entityChips from "@nerox_dev/remark-entity-chips";
 
 [
   entityChips,

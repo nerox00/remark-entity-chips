@@ -1,5 +1,5 @@
 {
-  "name": "@neroxdev/remark-entity-chips",
+  "name": "@nerox_dev/remark-entity-chips",
   "version": "0.1.0",
   "description": "Transform entity mentions into beautiful chips in Markdown",
   "main": "./dist/index.js",
@@ -31,7 +31,6 @@
   "homepage": "https://github.com/nerox00/entity-chips#readme",
   "files": [
     "dist",
-    "public",
     "README.md",
     "LICENSE"
   ],
