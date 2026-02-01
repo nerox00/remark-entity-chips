@@ -6,7 +6,8 @@
       "Bash(npx astro dev)",
       "Bash(npx tsc:*)",
       "Bash(npx vitest:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(del \"d:\\\\Edo\\\\esplorative\\\\remark-entity-chips\\\\download-favicons.mjs\")"
     ]
   }
 }

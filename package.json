@@ -1,6 +1,6 @@
 {
   "name": "@nerox_dev/remark-entity-chips",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "description": "Transform entity mentions into beautiful chips in Markdown",
   "main": "./dist/index.js",
   "scripts": {
@@ -41,7 +41,6 @@
     }
   },
   "dependencies": {
-    "sharp": "^0.34.5",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.1.0"
   },
