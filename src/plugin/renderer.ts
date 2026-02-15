@@ -1,7 +1,7 @@
-import type { EntityChipsOptions } from '../types.js';
+import type { Entity, EntityChipsOptions } from '../types.js';
 import type { ParsedMention } from './parser.js';
 import type { DetectedUrl } from './url-detector.js';
-import entities from '../data/entities.js';
+import { resolveEntities } from '../utils/entity-lookup.js';
 
 function escapeHtml(str: string): string {
   return str
@@ -14,9 +14,15 @@ function escapeHtml(str: string): string {
 // Build a reverse lookup: domain -> entity slug (lazy, built once)
 let domainToSlug: Record<string, string> | null = null;
 
+/** @internal Reset cached domain map (for testing) */
+export function _resetDomainToSlugMap(): void {
+  domainToSlug = null;
+}
+
 function getDomainToSlugMap(): Record<string, string> {
   if (!domainToSlug) {
     domainToSlug = {};
+    const entities = resolveEntities();
     for (const [slug, entity] of Object.entries(entities)) {
       if (entity.domain) {
         domainToSlug[entity.domain] = slug;
@@ -46,8 +52,19 @@ function getSlugFromUrl(url: string): string | null {
 
 const GOOGLE_FAVICON_API = 'https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=48&url=http://';
 
-function getFaviconUrl(domain: string): string {
+function getGoogleFaviconUrl(domain: string): string {
   return `${GOOGLE_FAVICON_API}${domain}`;
+}
+
+/** Resolve icon URL with priority: iconResolver > entity.icon > Google Favicon API */
+function resolveIconUrl(slug: string, entity: Entity | undefined, domain: string | null, options: EntityChipsOptions): string | null {
+  if (options.iconResolver) {
+    const resolved = options.iconResolver(slug, entity);
+    if (resolved) return resolved;
+  }
+  if (entity?.icon) return entity.icon;
+  if (domain) return getGoogleFaviconUrl(domain);
+  return null;
 }
 
 function getDomainFromUrl(url: string): string | null {
@@ -59,6 +76,7 @@ function getDomainFromUrl(url: string): string | null {
 }
 
 function getDomainForSlug(slug: string): string | null {
+  const entities = resolveEntities();
   const entity = entities[slug];
   return entity?.domain ?? getDomainFromUrl(entity?.url ?? '');
 }
@@ -81,8 +99,8 @@ export function renderEntityChip(mention: ParsedMention, options: EntityChipsOpt
   if (mention.entity) {
     const dataType = mention.entity.type;
     const domain = mention.entity.domain ?? getDomainFromUrl(mention.entity.url);
-    if (domain) {
-      const imgSrc = getFaviconUrl(domain);
+    const imgSrc = resolveIconUrl(mention.slug, mention.entity, domain, options);
+    if (imgSrc) {
       return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(mention.slug)}" data-type="${dataType}"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
     }
     return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(mention.slug)}" data-type="${dataType}"><span class="${nameClass}">${name}</span></a>`;
@@ -91,9 +109,10 @@ export function renderEntityChip(mention: ParsedMention, options: EntityChipsOpt
   // Entity NOT in db but has a URL: try to find favicon from the URL domain
   const domainSlug = getSlugFromUrl(mention.url);
   if (domainSlug) {
+    const entities = resolveEntities();
     const domain = getDomainForSlug(domainSlug);
-    if (domain) {
-      const imgSrc = getFaviconUrl(domain);
+    const imgSrc = resolveIconUrl(domainSlug, entities[domainSlug], domain, options);
+    if (imgSrc) {
       return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(domainSlug)}" data-type="link"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
     }
   }
@@ -101,8 +120,10 @@ export function renderEntityChip(mention: ParsedMention, options: EntityChipsOpt
   // No favicon available — try domain from the URL directly
   const urlDomain = getDomainFromUrl(mention.url);
   if (urlDomain) {
-    const imgSrc = getFaviconUrl(urlDomain);
-    return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(domainSlug ?? urlDomain)}" data-type="link"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
+    const imgSrc = resolveIconUrl(domainSlug ?? urlDomain, undefined, urlDomain, options);
+    if (imgSrc) {
+      return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(domainSlug ?? urlDomain)}" data-type="link"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
+    }
   }
 
   return `<a href="${href}" class="${chipClass}" data-type="link"><span class="${nameClass}">${name}</span></a>`;
@@ -119,9 +140,10 @@ export function renderLinkChip(text: string, url: string, options: EntityChipsOp
   const domainSlug = getSlugFromUrl(url);
 
   if (domainSlug) {
+    const entities = resolveEntities();
     const domain = getDomainForSlug(domainSlug);
-    if (domain) {
-      const imgSrc = getFaviconUrl(domain);
+    const imgSrc = resolveIconUrl(domainSlug, entities[domainSlug], domain, options);
+    if (imgSrc) {
       return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(domainSlug)}" data-type="link"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
     }
   }
@@ -129,8 +151,10 @@ export function renderLinkChip(text: string, url: string, options: EntityChipsOp
   // Fallback: use domain from URL directly
   const urlDomain = getDomainFromUrl(url);
   if (urlDomain) {
-    const imgSrc = getFaviconUrl(urlDomain);
-    return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(domainSlug ?? urlDomain)}" data-type="link"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
+    const imgSrc = resolveIconUrl(domainSlug ?? urlDomain, undefined, urlDomain, options);
+    if (imgSrc) {
+      return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(domainSlug ?? urlDomain)}" data-type="link"><img src="${imgSrc}" alt="${name}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${name}</span></a>`;
+    }
   }
 
   return `<a href="${href}" class="${chipClass}" data-type="link"><span class="${nameClass}">${name}</span></a>`;
@@ -142,12 +166,13 @@ export function renderUrlChip(detected: DetectedUrl, options: EntityChipsOptions
   const faviconClass = cls.favicon ?? 'entity-favicon';
   const nameClass = cls.name ?? 'entity-name';
 
+  const entities = resolveEntities();
   const domain = getDomainForSlug(detected.slug) ?? getDomainFromUrl(detected.url);
   const href = escapeHtml(detected.url);
   const displayUrl = escapeHtml(detected.url.replace(/^https?:\/\//, ''));
 
-  if (domain) {
-    const imgSrc = getFaviconUrl(domain);
+  const imgSrc = resolveIconUrl(detected.slug, entities[detected.slug], domain, options);
+  if (imgSrc) {
     return `<a href="${href}" class="${chipClass}" data-entity="${escapeHtml(detected.platform)}" data-type="platform"><img src="${imgSrc}" alt="${escapeHtml(detected.platform)}" width="16" height="16" class="${faviconClass}" /><span class="${nameClass}">${displayUrl}</span></a>`;
   }
 

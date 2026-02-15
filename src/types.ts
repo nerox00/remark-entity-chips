@@ -6,7 +6,12 @@ export interface Entity {
   type: 'company' | 'person' | 'platform' | 'project';
   x?: string;
   github?: string;
+  /** Custom icon URL or local path (e.g. "/entities/my-company.webp" or "https://cdn.example.com/icon.png") */
+  icon?: string;
 }
+
+/** Custom function to resolve icon URL for an entity. Return a string to override, or null to fallback to default. */
+export type IconResolver = (slug: string, entity?: Entity) => string | null;
 
 export interface EntityChipsOptions {
   /** Transform bare URLs into chips (default: true) */
@@ -18,4 +23,6 @@ export interface EntityChipsOptions {
     favicon?: string;
     name?: string;
   };
+  /** Custom icon resolver function. Takes priority over entity.icon and Google Favicon API. */
+  iconResolver?: IconResolver;
 }

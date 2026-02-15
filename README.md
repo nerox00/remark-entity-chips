@@ -148,17 +148,94 @@ import entityChips from "@nerox_dev/remark-entity-chips";
       favicon: "entity-favicon", // default
       name: "entity-name", // default
     },
+
+    // Custom icon resolver (optional)
+    iconResolver: (slug, entity) => {
+      return `https://cdn.example.com/icons/${slug}.png`;
+      // return null to fallback to entity.icon or Google Favicon
+    },
   },
 ];
 ```
 
-| Option                   | Type      | Default            | Description                              |
-| ------------------------ | --------- | ------------------ | ---------------------------------------- |
-| `autoDetectUrls`         | `boolean` | `true`             | Transform bare platform URLs into chips  |
-| `transformMarkdownLinks` | `boolean` | `false`            | Transform `[text](url)` links into chips |
-| `classNames.chip`        | `string`  | `"entity-chip"`    | CSS class for the chip wrapper           |
-| `classNames.favicon`     | `string`  | `"entity-favicon"` | CSS class for the favicon image          |
-| `classNames.name`        | `string`  | `"entity-name"`    | CSS class for the label text             |
+| Option                   | Type           | Default            | Description                                        |
+| ------------------------ | -------------- | ------------------ | -------------------------------------------------- |
+| `autoDetectUrls`         | `boolean`      | `true`             | Transform bare platform URLs into chips            |
+| `transformMarkdownLinks` | `boolean`      | `false`            | Transform `[text](url)` links into chips           |
+| `classNames.chip`        | `string`       | `"entity-chip"`    | CSS class for the chip wrapper                     |
+| `classNames.favicon`     | `string`       | `"entity-favicon"` | CSS class for the favicon image                    |
+| `classNames.name`        | `string`       | `"entity-name"`    | CSS class for the label text                       |
+| `iconResolver`           | `IconResolver` | `undefined`        | Custom function to resolve icon URLs (see below)   |
+
+## Custom Entities
+
+You can extend or override the built-in entity database by creating an `entity-chips.json` file in your project root.
+
+```json
+{
+  "my-company": {
+    "name": "My Company",
+    "domain": "mycompany.com",
+    "url": "https://mycompany.com",
+    "category": "saas",
+    "type": "company"
+  }
+}
+```
+
+The plugin automatically detects this file and merges it with the built-in database. Custom entries override built-in ones with the same key.
+
+Then use it in Markdown:
+
+```md
+Check out @[my-company] for more info.
+```
+
+### Custom Icons
+
+Each entity supports an optional `icon` field for custom favicon sources — a local path served by your framework (e.g. from `public/`) or an absolute URL to a CDN:
+
+```json
+{
+  "my-company": {
+    "name": "My Company",
+    "domain": "mycompany.com",
+    "url": "https://mycompany.com",
+    "category": "saas",
+    "type": "company",
+    "icon": "/entities/my-company.webp"
+  },
+  "partner": {
+    "name": "Partner Inc",
+    "domain": "partner.io",
+    "url": "https://partner.io",
+    "category": "saas",
+    "type": "company",
+    "icon": "https://cdn.example.com/icons/partner.png"
+  }
+}
+```
+
+### Icon Resolution Priority
+
+The plugin resolves icons in this order:
+
+1. **`iconResolver` option** — if provided and returns a string, that URL is used
+2. **`entity.icon` field** — if set on the entity (from `entity-chips.json` or built-in)
+3. **Google Favicon API** — default fallback using the entity's domain
+
+```js
+// Example: serve all icons from a CDN, fallback to default
+[
+  entityChips,
+  {
+    iconResolver: (slug, entity) => {
+      if (entity?.icon) return entity.icon;
+      return `https://cdn.example.com/favicons/${slug}.webp`;
+    },
+  },
+];
+```
 
 ## Supported Entities
 
